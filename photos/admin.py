@@ -1,18 +1,18 @@
 from django.contrib import admin
-from photos.models import Photo, ThumbNail
+from photos.models import Photo, Thumbnail
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ["title", "created_at"]
+    list_display = ["title", "photo", "thumbnail", "created_at"]
 
     class Meta:
         model = Photo
 
-class ThumbNailAdmin(admin.ModelAdmin):
+class ThumbnailAdmin(admin.ModelAdmin):
     list_display = ["thumbnail", "created_at"]
 
     class Meta:
-        model = ThumbNail
+        model = Thumbnail
 
 admin.site.register(Photo, PhotoAdmin)
-admin.site.register(ThumbNail, ThumbNailAdmin)
+admin.site.register(Thumbnail, ThumbnailAdmin)
 

@@ -142,6 +142,11 @@ ALLOWED_HOSTS = ['*']
 
 DEBUG = False
 
+IMAGE_MAX_SIZE = 640, 480
+IMAGE_MAX_WIDTH = 640
+IMAGE_MAX_HEIGHT = 480
+THUMBNAIL_SIZE = 200, 150
+
 try:
     from .settings_dev import *
 except ImportError:
