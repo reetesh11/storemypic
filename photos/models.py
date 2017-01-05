@@ -16,7 +16,7 @@ def get_path_for_my_model_file(instance, filename):
 
 def path_and_rename(prefix, filename):
     ext = filename.split('.')[-1]
-    filename = '{}.{}'.format(self.name.hex, ext)
+    filename = '{}.{}'.format(uuid.uuid4().hex, ext)
     return os.path.join(prefix, filename)
 
 class Photo(models.Model):
