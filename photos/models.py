@@ -1,40 +1,47 @@
 from __future__ import unicode_literals
+from django.core.files.base import ContentFile
 from django.conf import settings
 from django.db import models
 from PIL import Image
 import boto
+import uuid
+import os
+from django.utils.deconstruct import deconstructible
+from storages.backends.s3boto import S3BotoStorage
+from StringIO import StringIO
+
+
+def upload_to_photo(instance, filename):
+    return path_and_rename('photo/', filename)
+
+def path_and_rename(prefix, filename):
+    ext = filename.split('.')[-1]
+    filename = '{}.{}'.format(self.name.hex, ext)
+    return os.path.join(prefix, filename)
 
 class Photo(models.Model):
+    name  = models.CharField(max_length=100, null=True, blank=True, unique=True, editable=False)
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    photo = models.ImageField(null=False, default=False, upload_to='photo')
-    thumbnail = models.ImageField(upload_to="thumbnail", editable=False, null=True)
-
+    photo = models.ImageField(null=False, default=False, upload_to=upload_to_photo)
+    thumbnail = models.ImageField(null=True, editable=False,
+                                  upload_to='thumbnail/')
+    
     def __unicode__(self):
         return self.title
+
+    def save(self, force_insert=False, force_update=False):
+        super(Photo, self).save(force_insert, force_update)
+        thumbnail = StringIO()
+        self.name = str(self.photo)
+        if self.photo:
+            im = Image.open(self.photo)
+            if im.size > settings.IMAGE_MAX_SIZE:
+                im.thumbnail(settings.IMAGE_MAX_SIZE)     
+                im.save(thumbnail, im.format)
+                self.photo.save(self.photo.name, ContentFile(thumbnail.getvalue()))
+            super(Photo, self).save(force_insert, force_update)
 
     class Meta:
         db_table = "photo"
         ordering = ["-created_at"]
-
-    def save(self, force_insert=False, force_update=False):
-        super(Photo, self).save(force_insert, force_update)
-        if self.photo:
-            im = Image.open(self.photo)
-            if im.size > settings.IMAGE_MAX_SIZE:
-                im.thumbnail(settings.IMAGE_MAX_SIZE)
-                self.photo = im
-            super(Photo, self).save(force_insert, force_update)
-
-class Thumbnail(models.Model):
-    thumbnail = models.ImageField(upload_to="thumbnail")
-    #photo = models.ForeignKey(Photo)
-    created_at = models.DateTimeField(null=True, auto_now_add=True)
-    class Meta:
-        db_table = "thumbnail"
-        ordering = ["-created_at"]
-
-    def save(self, force_insert=False, force_update=False):
-        super(Thumbnail, self).save(force_insert, force_update)
-        im = Image.open(self.thumbnail)
-        
