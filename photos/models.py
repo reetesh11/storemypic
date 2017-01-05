@@ -11,7 +11,7 @@ from storages.backends.s3boto import S3BotoStorage
 from StringIO import StringIO
 
 
-def upload_to_photo(instance, filename):
+def get_path_for_my_model_file(instance, filename):
     return path_and_rename('photo/', filename)
 
 def path_and_rename(prefix, filename):
@@ -23,7 +23,7 @@ class Photo(models.Model):
     name  = models.CharField(max_length=100, null=True, blank=True, unique=True, editable=False)
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    photo = models.ImageField(null=False, default=False, upload_to=upload_to_photo)
+    photo = models.ImageField(null=False, default=False, upload_to=get_path_for_my_model_file)
     thumbnail = models.ImageField(null=True, editable=False,
                                   upload_to='thumbnail/')
     
