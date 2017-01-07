@@ -23,9 +23,9 @@ class Photo(models.Model):
     name  = models.CharField(max_length=100, null=True, blank=True, unique=True, editable=False)
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    photo = models.ImageField(null=False, default=False, max_length=500,
+    photo = models.ImageField(null=False, default=False, max_length=4000,
                               upload_to=get_path_for_my_model_file)
-    thumbnail = models.ImageField(null=True, editable=False, max_length=500,
+    thumbnail = models.ImageField(null=True, editable=False, max_length=4000,
                                   upload_to='thumbnail/')
     
     def __unicode__(self):
