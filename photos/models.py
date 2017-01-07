@@ -41,6 +41,10 @@ class Photo(models.Model):
                 im.save(thumbnail, im.format)
                 self.photo.save(self.photo.name, ContentFile(thumbnail.getvalue()))
             super(Photo, self).save(force_insert, force_update)
+        if self.thumbnail:
+            if isinstance(StringIO, self.thumbnail):
+                self.thumbnail.save(self.photo.name, ContentFile(self.thumbnail.getvalue()))
+            super(Photo, self).save(force_insert, force_update)
 
     class Meta:
         db_table = "photo"
